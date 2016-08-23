@@ -22,7 +22,7 @@ using namespace std;
 #define OPTION_BITS "i"
 #define OPTION_LOGE "s"
 #define	Program	"rapsearch"
-#define	Version "2.22"
+#define	Version "2.23"
 
 void printUsage(char *error);
 
