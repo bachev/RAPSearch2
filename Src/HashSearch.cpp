@@ -18,13 +18,18 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/threadpool.hpp>
+#include "threadpool.hpp"
 #include "weight.h"
 #include "aa.h"
 #include "n2a.h"
 #include "mergeUnit.h"
+
 using namespace std;
 using namespace boost;
+
+// BaCh 23.08.2016
+// "boost::threadpool" is actually NOT part of BOOST, it's http://threadpool.sourceforge.net/
+// it probably was intended to be included in BOOST, but apparently never made it
 using namespace boost::threadpool;
 
 
