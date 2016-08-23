@@ -13,6 +13,21 @@ CXXFLAGS="${CXXFLAGS} "
 # get the system name (for later)
 systemuname=`uname`
 
+
+AC_ARG_ENABLE(clang,
+	AC_HELP_STRING([--enable-clang],
+	[use clang instead of gcc]))
+
+if test "${enable_clang}" = "yes" ; then
+  CC=clang
+fi
+
+AC_ARG_ENABLE(static,
+	AC_HELP_STRING([--enable-static],
+	[enables building of static binaries, default is no]))
+
+
+
 AC_LANG([C++])
 
 # ---------------------------------------------------------------------------
@@ -133,6 +148,11 @@ fi
 # End of optimisation tests
 # ---------------------------------------------------------------------------
 
+
+
+if test "${enable_static}" = "yes" ; then
+  CXXFLAGS="--static $CXXFLAGS"
+fi
 
 
 AC_CONFIG_FILES([Makefile
