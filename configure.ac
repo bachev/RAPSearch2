@@ -26,7 +26,9 @@ AC_ARG_ENABLE(static,
 	AC_HELP_STRING([--enable-static],
 	[enables building of static binaries, default is no]))
 
-
+AC_ARG_ENABLE(warnings,
+	      AC_HELP_STRING([--enable-warnings=no/yes],
+              [use 'yes' to enable warnings (-W and other options on gcc compiler)]))
 
 AC_LANG([C++])
 
@@ -155,13 +157,24 @@ if test "${enable_static}" = "yes" ; then
 fi
 
 
-if test $bachCCOMPILER = gcc; then
-  CXXFLAGS="${CXXFLAGS} -Werror=uninitialized -Werror=return-type -Werror=parentheses"
-  CFLAGS="${CFLAGS} -Werror=uninitialized -Werror=return-type "
+# Test if --enable-warnings given
+if test "${enable_warnings}" = "yes" ; then
+  if test $bachCCOMPILER = gcc; then
+
+# that one pukes way too often with boost 1.50
+# -Wold-style-cast
+
+    CXXFLAGS="${CXXFLAGS} -W -fdiagnostics-show-option -Wextra -Wshadow -fno-strict-aliasing -ansi -Wcast-align -Wcast-qual -Wchar-subscripts -Wpointer-arith -Wredundant-decls -Wwrite-strings -Woverloaded-virtual -Wsign-promo -Wformat -Wmissing-braces -Wparentheses -Wswitch -Wswitch-default -Wswitch-enum -Wunused -Wfloat-equal -Wendif-labels -Wconversion -Wdisabled-optimization -Wsequence-point -Werror=unused-value"
+  fi
 fi
 
-# unused values may be a problem (e.g. using == in an assignment)
+# ---------------------------------------------------------------------------
+# Minimum compiler error flags
+# ---------------------------------------------------------------------------
+
 if test $bachCCOMPILER = gcc; then
+  CXXFLAGS="${CXXFLAGS} -Werror=uninitialized -Werror=return-type -Werror=parentheses"
+# unused values may be a problem (e.g. using == in an assignment)
   CXXFLAGS="${CXXFLAGS} -Werror=unused-value"
 fi
 
