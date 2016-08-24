@@ -1,6 +1,8 @@
 #include "HashSearch.hpp"
 #include "paras.h"
 
+#include "config.h"
+
 #include <iostream>
 
 
@@ -22,7 +24,7 @@
 #define OPTION_BITS "i"
 #define OPTION_LOGE "s"
 #define	Program	"rapsearch"
-#define	Version "2.23"
+
 
 void printUsage(const char *error);
 
@@ -238,7 +240,7 @@ void printUsage(const char *error)
     fprintf(stderr,
             "%s v%s: Fast protein similarity search tool for proteins / short reads\n"
             "-------------------------------------------------------------------------------\n",
-	    Program, Version);
+	    Program, VERSION);
     fprintf(stderr,
             " Options: \n"
             "\t-" OPTION_QUERY        " string : query file or stdin (FASTA or FASTQ format)\n"
