@@ -28,7 +28,6 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-using namespace boost;
 
 
 boost::mutex muMonitor;
@@ -234,8 +233,8 @@ int CHashSearch::BuildDHash(const char* szFile, std::string& sOutFile, int nSpli
 		cout << "can not write files..." << endl;
 		return -1;
 	}
-	archive::binary_oarchive oa(of);
-	archive::binary_oarchive oaInfo(ofInfo);
+	boost::archive::binary_oarchive oa(of);
+	boost::archive::binary_oarchive oaInfo(ofInfo);
 	
 	// container for db para
 	MINDEX vHash(m_unTotalIdx, VUINT()); // all k-mer of database
@@ -775,8 +774,8 @@ void CHashSearch::Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& v
 	// construct query package
 	CQrPckg Query(vQSeqs, vQLens, vQNames);
 
-	archive::binary_iarchive iaD(ifD);
-	archive::binary_iarchive iaDInfo(ifDInfo);
+	boost::archive::binary_iarchive iaD(ifD);
+	boost::archive::binary_iarchive iaDInfo(ifDInfo);
 
 	std::vector<double> vFreq;
 	VUINT vWordCnts(m_unTotalIdx, 0);
@@ -820,8 +819,8 @@ void CHashSearch::Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& v
 			m_ofTemp.close();
 
 			m_llOutCum = 0;
-			std::ofstream ofOut((m_sOutBase+".tmp"+lexical_cast<std::string>(j-1)+".idx").c_str());
-			archive::binary_oarchive oaOut(ofOut);
+			std::ofstream ofOut((m_sOutBase+".tmp"+boost::lexical_cast<std::string>(j-1)+".idx").c_str());
+			boost::archive::binary_oarchive oaOut(ofOut);
 			oaOut << m_vOutIdx;
 			ofOut.close();
 		}
@@ -832,7 +831,7 @@ void CHashSearch::Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& v
 		}
 		m_nSeqBase = 0;
 
-		m_ofTemp.open((m_sOutBase+".tmp"+lexical_cast<std::string>(j)).c_str());
+		m_ofTemp.open((m_sOutBase+".tmp"+boost::lexical_cast<std::string>(j)).c_str());
 
 		// read db file and store info
 		MINDEX vDHash(m_unTotalIdx, VUINT()); // all k-mer of database
@@ -861,8 +860,11 @@ void CHashSearch::Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& v
 			// generate results
 			for (uint k = 0; k < vQLens.size()-1; k+=m_nIdxScl)
 			{
-				tp.schedule(bind(&CHashSearch::Searching, this, k, Query, Db));
-				//Searching(k, Query, Db);
+			  // BaCh 24.08.2016
+			  // So, OK, what the heck did this bind go to: std::bind or boost::bind
+			  // I *think* boost::bind was folded into the C++14 std, so let's try this.
+			  tp.schedule(std::bind(&CHashSearch::Searching, this, k, Query, Db));
+			  //Searching(k, Query, Db);
 			}
 
 			tp.wait();
@@ -879,8 +881,8 @@ void CHashSearch::Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& v
 		m_ofTemp.close();
 		m_llOutCum = 0;
 
-		std::ofstream ofOut((m_sOutBase+".tmp"+lexical_cast<std::string>(nDbBlockNum-1)+".idx").c_str());
-		archive::binary_oarchive oaOut(ofOut);
+		std::ofstream ofOut((m_sOutBase+".tmp"+boost::lexical_cast<std::string>(nDbBlockNum-1)+".idx").c_str());
+		boost::archive::binary_oarchive oaOut(ofOut);
 		oaOut << m_vOutIdx;
 		ofOut.close();
 		m_vOutIdx.clear();
@@ -937,25 +939,25 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 	m_unMer = unMer;
 	m_unDSize = unDSize;
 	m_unQSize = unQSize;
-	m_unTotalIdx = lexical_cast<uint>(pow(10.0, int(m_unMer)));
+	m_unTotalIdx = boost::lexical_cast<uint>(pow(10.0, int(m_unMer)));
 
 	m_bFast = true;
 	if (true == m_bFast)
 	{
 		m_unMutSeedLen = 10;
-		m_vMutation.push_back(lexical_cast<uint>(pow(10.0, int(m_unMer-4-1))));
-		m_vMutation.push_back(lexical_cast<uint>(pow(10.0, int(m_unMer-5-1))));
-		m_vMutation.push_back(lexical_cast<uint>(pow(10.0, int(m_unMer-3-1))));
+		m_vMutation.push_back(boost::lexical_cast<uint>(pow(10.0, int(m_unMer-4-1))));
+		m_vMutation.push_back(boost::lexical_cast<uint>(pow(10.0, int(m_unMer-5-1))));
+		m_vMutation.push_back(boost::lexical_cast<uint>(pow(10.0, int(m_unMer-3-1))));
 		if (m_unMer > 6)
 		{
-			m_vMutation.push_back(lexical_cast<uint>(pow(10.0, int(m_unMer-6-1))));
+			m_vMutation.push_back(boost::lexical_cast<uint>(pow(10.0, int(m_unMer-6-1))));
 		}
 	}
 	else
 	{
 		m_unMutSeedLen = 9;
-		m_vMutation.push_back(lexical_cast<uint>(pow(10.0, int(m_unMer-3-1))));
-		m_vMutation.push_back(lexical_cast<uint>(pow(10.0, int(m_unMer-5-1))));
+		m_vMutation.push_back(boost::lexical_cast<uint>(pow(10.0, int(m_unMer-3-1))));
+		m_vMutation.push_back(boost::lexical_cast<uint>(pow(10.0, int(m_unMer-5-1))));
 	}
 
 	m_sQFile = szQFile;
@@ -1067,7 +1069,7 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 void CHashSearch::Process(char* szDBFile, char* szDbHash, bool bFullId, int nSplitNum, uint unMer)
 {
 	m_unMer = unMer;
-	m_unTotalIdx = lexical_cast<uint>(pow(10.0, int(m_unMer)));
+	m_unTotalIdx = boost::lexical_cast<uint>(pow(10.0, int(m_unMer)));
 
 	std::string sDbOut(szDbHash);
 	BuildDHash(szDBFile, sDbOut, nSplitNum, bFullId);
@@ -2470,8 +2472,8 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 
 		st.sInfo.insert(0, nBegStrAligned+1, ' ');
 
-		std::string sQNum = lexical_cast<std::string>(st.nQBeg);
-		st.sQ = std::string(nBegStrAligned-sQNum.size(), ' ') + sQNum + " " + st.sQ + " " + lexical_cast<std::string>(st.nQEnd);
+		std::string sQNum = boost::lexical_cast<std::string>(st.nQBeg);
+		st.sQ = std::string(nBegStrAligned-sQNum.size(), ' ') + sQNum + " " + st.sQ + " " + boost::lexical_cast<std::string>(st.nQEnd);
 
 		++st.nDSt;
 		++st.nDEd;
@@ -2482,8 +2484,8 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 		}
 		st.nDSt = 1848*nFac+st.nDSt;
 		st.nDEd = 1848*nFac+st.nDEd;
-		std::string sDNum = lexical_cast<std::string>(st.nDSt);
-		st.sD = std::string(nBegStrAligned-sDNum.size(), ' ') + sDNum + " " + st.sD + " " + lexical_cast<std::string>(st.nDEd);
+		std::string sDNum = boost::lexical_cast<std::string>(st.nDSt);
+		st.sD = std::string(nBegStrAligned-sDNum.size(), ' ') + sDNum + " " + st.sD + " " + boost::lexical_cast<std::string>(st.nDEd);
 
 		st.sQName = Query.m_vNames[nQrIdx];
 		st.sDName = Db.m_vNames[st.nDbIdx];
@@ -2515,14 +2517,14 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 			if (vTemp[nf].dEValue == 1000000)
 			{
 				--nl;
-				swap(vTemp[nf], vTemp[nl]);
+				std::swap(vTemp[nf], vTemp[nl]);
 			}
 			++nf;
 		}
 		vTemp.resize(nl);
 
 		std::stringstream sOutput;
-		archive::binary_oarchive oa(sOutput);
+		boost::archive::binary_oarchive oa(sOutput);
 		oa << vTemp;
 
 		muMonitor.lock();
@@ -2765,7 +2767,7 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, std::string& sDbPre
 
 	for (int i = 0; i < nDbBlockNum; ++i)
 	{
-		std::string sName = m_sOutBase+".tmp"+lexical_cast<std::string>(i);
+		std::string sName = m_sOutBase+".tmp"+boost::lexical_cast<std::string>(i);
 		CMergeUnit* p = new CMergeUnit(sName.c_str());
 		vMergeUnit.push_back(p);
 	}
@@ -3010,16 +3012,16 @@ void CHashSearch::PrintXmlBegin(std::string& sDbPre)
 	{
 		if (m_bLogE == true)
 		{
-			PrintXmlLine("Parameters_log-expect_evalue", lexical_cast<std::string>(m_dThr));
+			PrintXmlLine("Parameters_log-expect_evalue", boost::lexical_cast<std::string>(m_dThr));
 		}
 		else
 		{
-			PrintXmlLine("Parameters_expect_evalue", lexical_cast<std::string>(pow(10,m_dThr)));
+			PrintXmlLine("Parameters_expect_evalue", boost::lexical_cast<std::string>(pow(10,m_dThr)));
 		}
 	}
 	else
 	{
-		PrintXmlLine("Parameters_bits-expect", lexical_cast<std::string>(m_dThr));
+		PrintXmlLine("Parameters_bits-expect", boost::lexical_cast<std::string>(m_dThr));
 	}
 	PrintXmlLine("Parameters_gap-open", "11");
 	PrintXmlLine("Parameters_gap-extend", "1");
@@ -3033,8 +3035,8 @@ void CHashSearch::PrintXmlBegin(std::string& sDbPre)
 void CHashSearch::PrintXml(std::vector<CHitUnit>& v, int nIdx)
 {
 	PrintXmlTag("Iteration");
-	PrintXmlLine("Iteration_iter-num", lexical_cast<std::string>(m_unXmlCnt++));
-	//PrintXmlLine("Iteration_query-ID", "lcl|"+lexical_cast<std::string>(nIdx));
+	PrintXmlLine("Iteration_iter-num", boost::lexical_cast<std::string>(m_unXmlCnt++));
+	//PrintXmlLine("Iteration_query-ID", "lcl|"+boost::lexical_cast<std::string>(nIdx));
 	PrintXmlLine("Iteration_query-def", v[0].sQName);
 	PrintXmlLine("Iteration_query-len", v[0].nQrLen);
 	PrintXmlTag("Iteration_hits");
@@ -3045,8 +3047,8 @@ void CHashSearch::PrintXml(std::vector<CHitUnit>& v, int nIdx)
 		CHitUnit& c = v[i];
 
 		PrintXmlTag("Hit");
-		PrintXmlLine("Hit_num", lexical_cast<std::string>(i+1));
-		//PrintXmlLine("Hit_id", "gnl|"+lexical_cast<std::string>(c.nDbIdx));
+		PrintXmlLine("Hit_num", boost::lexical_cast<std::string>(i+1));
+		//PrintXmlLine("Hit_id", "gnl|"+boost::lexical_cast<std::string>(c.nDbIdx));
 		PrintXmlLine("Hit_def", c.sDName);
 		//PrintXmlLine("Hit_accession", c.nDbIdx);
 		PrintXmlLine("Hit_len", c.nDbLen);

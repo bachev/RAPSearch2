@@ -15,8 +15,6 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-using namespace boost;
-
 
 
 CMergeUnit::CMergeUnit(const char* szFile)
@@ -30,7 +28,7 @@ CMergeUnit::CMergeUnit(const char* szFile)
 	m_sFile.assign(szFile);
 
 	std::ifstream ifIdx((m_sFile+".idx").c_str());
-	archive::binary_iarchive ia(ifIdx);
+	boost::archive::binary_iarchive ia(ifIdx);
 	ia >> m_vIdx;
 	ifIdx.close();
 }
@@ -44,7 +42,7 @@ void CMergeUnit::Update(int nID, std::vector<CHitUnit>& v)
 	}
 
 	m_ifFile.seekg(m_vIdx[nID].m_llBeg, std::ios::beg);
-	archive::binary_iarchive ia(m_ifFile);
+	boost::archive::binary_iarchive ia(m_ifFile);
 	std::vector<CHitUnit> vIn;
 	ia >> vIn;
 
