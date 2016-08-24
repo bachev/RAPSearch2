@@ -111,6 +111,26 @@ struct CompBits : HitComptor
 };
 
 
+struct CompEvalBits : HitComptor
+{
+	virtual bool operator() (const CHitUnit& st1, const CHitUnit& st2) const
+	{
+	  if(st1.dEValue == st2.dEValue) return st1.dBits > st2.dBits;
+	  return st1.dEValue < st2.dEValue;
+	}
+};
+
+
+struct CompBitsEval : HitComptor
+{
+	virtual bool operator() (const CHitUnit& st1, const CHitUnit& st2) const
+	{
+	  if(st1.dBits == st2.dBits) return st1.dEValue < st2.dEValue;
+	  return st1.dBits > st2.dBits;
+	}
+};
+
+
 struct ComptorWrapper
 {
 	HitComptor* _p;

@@ -883,11 +883,11 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 	m_bLogE = bLogE;
 	if (m_bEvalue == true)
 	{
-		m_pComptor = new CompEval();
+		m_pComptor = new CompEvalBits();
 	}
 	else
 	{
-		m_pComptor = new CompBits();
+		m_pComptor = new CompBitsEval();
 	}
 	m_dThr = dThr;
 	if (m_bLogE == false)
