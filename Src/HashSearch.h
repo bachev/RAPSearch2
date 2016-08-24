@@ -14,22 +14,21 @@
 #include "cindex.h"
 #include "hitUnit.h"
 #include "Seg.h"
-using namespace std;
 
 
 typedef unsigned int uint;
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 
-typedef vector<char> POOL;
+typedef std::vector<char> POOL;
 typedef POOL::iterator ITER;
 
-typedef vector<uint> VUINT;
-typedef vector<uchar> VUCHAR;
-typedef vector<ushort> VUSHORT;
-typedef vector<VUINT> MINDEX;
-typedef vector<string> VNAMES;
-typedef vector<VUSHORT> VCOMP;
+typedef std::vector<uint> VUINT;
+typedef std::vector<uchar> VUCHAR;
+typedef std::vector<ushort> VUSHORT;
+typedef std::vector<VUINT> MINDEX;
+typedef std::vector<std::string> VNAMES;
+typedef std::vector<VUSHORT> VCOMP;
 
 
 // query package including sequences, length, and names
@@ -50,7 +49,7 @@ public:
 class CDbPckg
 {
 public:
-	CDbPckg(MINDEX& vHash, VUCHAR& vSeqs, VUINT& vLens, VNAMES& vNames, VCOMP& vComp, vector<double>& vFreq, VUINT& vWordCnts, uint& unMedian)
+	CDbPckg(MINDEX& vHash, VUCHAR& vSeqs, VUINT& vLens, VNAMES& vNames, VCOMP& vComp, std::vector<double>& vFreq, VUINT& vWordCnts, uint& unMedian)
 		: m_vHash(vHash), m_vSeqs(vSeqs), m_vLens(vLens), m_vNames(vNames), m_vComp(vComp), m_vFreq(vFreq), m_vWordCnts(vWordCnts), m_unMedian(unMedian) {}
 
 public:
@@ -59,7 +58,7 @@ public:
 	VUINT& m_vLens;
 	VNAMES& m_vNames;
 	VCOMP& m_vComp;
-	vector<double>& m_vFreq;
+	std::vector<double>& m_vFreq;
 	VUINT& m_vWordCnts;
 	uint m_unMedian;
 };
@@ -88,13 +87,13 @@ typedef struct STALNMNT
 	int nDFwd;
 	int nQBwd;
 	int nDBwd;
-	vector<char> vMode;
-	vector<int> vLen;
+	std::vector<char> vMode;
+	std::vector<int> vLen;
 }STAlnmnt;
 
 
 /* map for store hit results */
-typedef pair<int, int> PIDX;
+typedef std::pair<int, int> PIDX;
 struct pairComp
 {
 	bool operator() (const PIDX& lhs, const PIDX& rhs) const
@@ -109,7 +108,7 @@ struct pairComp
 		}
 	}
 };
-typedef multimap<PIDX, CHitUnit, pairComp> MRESULT;
+typedef std::multimap<PIDX, CHitUnit, pairComp> MRESULT;
 typedef MRESULT::iterator MIT;
 
 /* the class for indexing, searching */
@@ -137,30 +136,30 @@ public:
 
 private:
 	// read file and build the hash table
-	int BuildDHash(const char* szDbFile, string& sOutFile, int nSplitNum, bool bFullId); 
+	int BuildDHash(const char* szDbFile, std::string& sOutFile, int nSplitNum, bool bFullId); 
 	// read file and build the hash table
-	int BuildQHash(istream& input, int nQueryType, map<string,char>& mTransTable, map<char,char>& mComple, Seg* seg, Seg* segsht, vector<uchar>& vQSeqs, vector<uint>& vQLens, VNAMES& vQNames); 
+	int BuildQHash(std::istream& input, int nQueryType, std::map<std::string,char>& mTransTable, std::map<char,char>& mComple, Seg* seg, Seg* segsht, std::vector<uchar>& vQSeqs, std::vector<uint>& vQLens, VNAMES& vQNames); 
 	// probe that what is the type of query
 	int GuessQueryType(POOL& vPool);
 	// char -> compressed code
 	void Encode(VUCHAR& v); 
 	// char -> compressed code & count DB
-	long int Encode(VUCHAR& v, vector<double>& vFreq); 
+	long int Encode(VUCHAR& v, std::vector<double>& vFreq); 
 	// compressed code -> char
-	void Decode(const vector<uchar>& v, string& sOut); 
+	void Decode(const std::vector<uchar>& v, std::string& sOut); 
 	// char -> 10-base index
-	int Tran2Ten(const vector<uchar>& v, uint nBeg); 
+	int Tran2Ten(const std::vector<uchar>& v, uint nBeg); 
 	// char -> 10-base index
-	int Tran2Ten(CAlnPckg& QrAln, vector<char>& vValid); 
+	int Tran2Ten(CAlnPckg& QrAln, std::vector<char>& vValid); 
 
 	// search all sequences in database
-	void Search(string& sDbPre, int nSeqNum, vector<uchar>& vQSeqs, vector<uint>& vQLens, VNAMES& vQNames);
+	void Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& vQSeqs, std::vector<uint>& vQLens, VNAMES& vQNames);
 	// search for each search in database
 	void Searching(int nQrIdx, CQrPckg& Query, CDbPckg& Db); 
 	void ExtendSetPair(int nLen, CQrPckg& Query, CDbPckg& Db); 
 	// search for each seed in a entry of database
-	int  ExtendSeq2Set(int nSeed, uint unSeedLen, vector<uchar>& vExtra,
-			int nQSeqIdx, CAlnPckg& QrAln, int nQOriLen, vector<char>& vValid,
+	int  ExtendSeq2Set(int nSeed, uint unSeedLen, std::vector<uchar>& vExtra,
+			int nQSeqIdx, CAlnPckg& QrAln, int nQOriLen, std::vector<char>& vValid,
 			VUINT& vDSet, CDbPckg& Db,
 			VNAMES& vQNames, VNAMES& vDNmaes,
 			MRESULT& mRes, int nTreadID);
@@ -172,7 +171,7 @@ private:
 	// backward ungapped alignment
 	int AlignBwd(uchar *queryseq, uchar *dataseq, int pos1, int pos2, int *extl, int *match, int score0);
 	// gapped alignment
-	int AlignGapped(uchar *seq1, uchar *seq2, int M, int N, int *ext1, int *ext2, int *match_len, int *gap, vector<char>& vMode, vector<short>& vLen, int nTreadID);
+	int AlignGapped(uchar *seq1, uchar *seq2, int M, int N, int *ext1, int *ext2, int *match_len, int *gap, std::vector<char>& vMode, std::vector<short>& vLen, int nTreadID);
 	// retrieve a sequence according to a seed
 	uchar* GetSeq(VUCHAR& vSeqs, VUINT& vLen, VNAMES& vNames, uint& unPos, uint& unLen, uint& unSeedBeg);
 	
@@ -182,7 +181,7 @@ private:
 	// calculate e-value and generate the subsequence 
 	void CalRes(int nQIdx, uchar* pQ, int nQLen, uint unQSeedBeg, int nDIdx, uchar* pD, uint unDSeedBeg, CDbPckg& Db, uint unLocalSeedLen, STAlnmnt& stAlnmnt, MRESULT& mRes, int nTreadID);
 	// calculate e-values of multi hits
-	void SumEvalue(vector<CHitUnit>& v, int nSt, int nEd, int nLen, int nTreadID);
+	void SumEvalue(std::vector<CHitUnit>& v, int nSt, int nEd, int nLen, int nTreadID);
 	// output the result
 	void PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg& Db);
 
@@ -190,20 +189,20 @@ private:
 	void GuessTotSeq(const char* szFile, long int& lnSeqNum, long int& lnAaNum);
 
 	// merge the result files
-	void MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre);
+	void MergeRes(int nDbBlockNum, VNAMES& vQNames, std::string& sDbPre);
 
 	// init alignment parameters
 	void InitAlignPara(bool bType, long int lnSLen, int nSNum, int nThreadNum);
 
-	void PrintAln(vector<CHitUnit>& v, ostream& of);
-	void PrintM8(vector<CHitUnit>& v, ostream& of);
+	void PrintAln(std::vector<CHitUnit>& v, std::ostream& of);
+	void PrintM8(std::vector<CHitUnit>& v, std::ostream& of);
 
 	template<class T>
 	void PrintXmlLine(const char* sTag, T s);
 	void PrintXmlTag(const char* sTag);
 	void PrintXmlTagR(const char* sTag);
-	void PrintXmlBegin(string& sDb);
-	void PrintXml(vector<CHitUnit>& v, int nIdx);
+	void PrintXmlBegin(std::string& sDb);
+	void PrintXml(std::vector<CHitUnit>& v, int nIdx);
 	void PrintXmlEnd();
 
 
@@ -246,9 +245,9 @@ private:
 	double	UngapExtSCut;
 	int MinMatch4Exp;
 
-	vector<vector<vector<char> > > m_vTrace;
-	vector<vector<vector<char> > > m_vETrace;
-	vector<vector<vector<char> > > m_vDTrace;
+	std::vector<std::vector<std::vector<char> > > m_vTrace;
+	std::vector<std::vector<std::vector<char> > > m_vETrace;
+	std::vector<std::vector<std::vector<char> > > m_vDTrace;
 
 	bool m_bFast;
 	uint m_unMutSeedLen;
@@ -263,32 +262,32 @@ private:
 	long long m_nMaxM8;
 	bool m_bPrintEmpty;
 	bool m_bGapExt;
-	string m_sStartTime;
-	string m_sQFile;
-	string m_sDFile;
-	ofstream m_ofTemp;
+	std::string m_sStartTime;
+	std::string m_sQFile;
+	std::string m_sDFile;
+	std::ofstream m_ofTemp;
 	int m_nStdout;
 
 	bool m_bXml;
-	ofstream m_ofXml;
+	std::ofstream m_ofXml;
 	uint m_unXmlSp;
 	uint m_unXmlCnt;
 
-	string m_sOutBase;
+	std::string m_sOutBase;
 	// store the ouput
-	string m_sOutput;
-	string m_sM8;
-	vector<CIndex> m_vOutIdx;
-	vector<CIndex> m_vM8Idx;
+	std::string m_sOutput;
+	std::string m_sM8;
+	std::vector<CIndex> m_vOutIdx;
+	std::vector<CIndex> m_vM8Idx;
 	long long m_llOutCum;
 	long long m_llM8Cum;
 	int m_nSeqBase;
-	string m_sLeft;
+	std::string m_sLeft;
 
 	// for multithread
 	int m_nThreadNum;
-	vector<BlastStat*> m_vpBlastSig;
-	vector<int> m_vBlastPt; // -1 means available, 1 means used
+	std::vector<BlastStat*> m_vpBlastSig;
+	std::vector<int> m_vBlastPt; // -1 means available, 1 means used
 
 	// for test on gap extension
 	uint m_unGapExt;
@@ -299,7 +298,7 @@ private:
 	long int m_lnTotalAa;
 
 	// hssp criteria
-	vector<int> m_vCriteria;
+	std::vector<int> m_vCriteria;
 };
 
 
@@ -352,7 +351,7 @@ inline void CHashSearch::InitAlignPara(bool bType, long int lnSLen, int nSNum, i
 }
 
 
-inline int CHashSearch::Tran2Ten(const vector<uchar>& v, uint nBeg)
+inline int CHashSearch::Tran2Ten(const std::vector<uchar>& v, uint nBeg)
 {
 	if (nBeg >= v.size())
 	{
@@ -371,7 +370,7 @@ inline int CHashSearch::Tran2Ten(const vector<uchar>& v, uint nBeg)
 }
 
 
-inline int CHashSearch::Tran2Ten(CAlnPckg& QrAln, vector<char>& vValid)
+inline int CHashSearch::Tran2Ten(CAlnPckg& QrAln, std::vector<char>& vValid)
 {
 	if (QrAln.m_unSeedBeg >= QrAln.m_unLen-m_unMer+1)
 	{
@@ -390,8 +389,12 @@ inline int CHashSearch::Tran2Ten(CAlnPckg& QrAln, vector<char>& vValid)
 }
 
 
-inline void CHashSearch::Decode(const vector<uchar>& v, string& sOut)
+inline void CHashSearch::Decode(const std::vector<uchar>& v, std::string& sOut)
 {
+        // FIXME: BaCh 24.08.2016
+        // reserve() ... really??? Shouldn't it be resize() or is there some other "magic"
+        //  behind the scenes?
+        // That doesn't feel right, check asap.
 	sOut.reserve(v.size());
 	for (uint i = 0; i < v.size(); ++i)
 	{
@@ -400,7 +403,7 @@ inline void CHashSearch::Decode(const vector<uchar>& v, string& sOut)
 }
 
 
-inline void CHashSearch::Encode(vector<uchar>& v)
+inline void CHashSearch::Encode(std::vector<uchar>& v)
 {
 	//cout << v.size() << endl;
 	for (uint i = 0; i < v.size(); ++i)
@@ -410,7 +413,7 @@ inline void CHashSearch::Encode(vector<uchar>& v)
 }
 
 
-inline long int CHashSearch::Encode(vector<uchar>& v, vector<double>& vFreq)
+inline long int CHashSearch::Encode(std::vector<uchar>& v, std::vector<double>& vFreq)
 {
 	long int lnTotalAa = 0;
 	//cout << v.size() << endl;

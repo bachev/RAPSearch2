@@ -24,7 +24,10 @@
 #include "n2a.h"
 #include "mergeUnit.h"
 
-using namespace std;
+using std::cout;
+using std::cerr;
+using std::endl;
+
 using namespace boost;
 
 // BaCh 23.08.2016
@@ -47,9 +50,9 @@ CHashSearch::CHashSearch(int nThreadNum)
 	// for any letter which is not in the 20 aa
 	m_uMask = 10;
 	m_uSeg = 8;
-	fill_n(m_aChar2Code, 256, (m_uMask<<4));
-	fill_n(m_aCode2Char, 256, m_uMask);
-	fill_n(m_aCode2Ten, 256, m_uMask);
+	std::fill_n(m_aChar2Code, 256, (m_uMask<<4));
+	std::fill_n(m_aCode2Char, 256, m_uMask);
+	std::fill_n(m_aCode2Ten, 256, m_uMask);
 	// read group info in aa.h and build mapping array
 	// defaultly use murphy10s
 	for (int i = 0; i < 500; ++i)
@@ -78,7 +81,7 @@ CHashSearch::CHashSearch(int nThreadNum)
 	}
 
 	// build substitute matrix for compressed char
-	fill_n((int*)m_aSubMatrix, 256*256, -5);
+	std::fill_n((int*)m_aSubMatrix, 256*256, -5);
 	for (uint i = 0; i < strlen(aAAAlph); ++i)
 	{
 		for (uint j = 0; j < strlen(aAAAlph); ++j)
@@ -106,9 +109,9 @@ CHashSearch::CHashSearch(int nThreadNum)
 	{
 		m_nThreadNum = nThreadNum;
 	}
-	m_vTrace.assign(m_nThreadNum, vector<vector<char> >(LONGQUERY, vector<char>(LONGQUERY)));
-	m_vETrace.assign(m_nThreadNum, vector<vector<char> >(LONGQUERY, vector<char>(LONGQUERY)));
-	m_vDTrace.assign(m_nThreadNum, vector<vector<char> >(LONGQUERY, vector<char>(LONGQUERY)));
+	m_vTrace.assign(m_nThreadNum, std::vector<std::vector<char> >(LONGQUERY, std::vector<char>(LONGQUERY)));
+	m_vETrace.assign(m_nThreadNum, std::vector<std::vector<char> >(LONGQUERY, std::vector<char>(LONGQUERY)));
+	m_vDTrace.assign(m_nThreadNum, std::vector<std::vector<char> >(LONGQUERY, std::vector<char>(LONGQUERY)));
 	m_vBlastPt.assign(m_nThreadNum, -1);
 
 	m_unTotalSeeds = 0;
@@ -197,7 +200,7 @@ struct CompDbObj
 };
 
 
-int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum, bool bFullId)
+int CHashSearch::BuildDHash(const char* szFile, std::string& sOutFile, int nSplitNum, bool bFullId)
 {
 	/***************************************************************/
 	// revise the size of database according to rapsearch
@@ -205,8 +208,8 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
 	long int lnAaNum = 0;
     GuessTotSeq(szFile, lnSeqNum, lnAaNum);
 
-	ifstream is(szFile);
-	is.seekg(0, ios::end);
+	std::ifstream is(szFile);
+	is.seekg(0, std::ios::end);
 	long int lnFileSize = is.tellg();
 	is.close();
 	long int lnBlockSize = (long int)((1<<30) * 0.618);
@@ -221,7 +224,7 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
 		
 	// the para for seed variants in both fast and slow mode
 	m_bFast = true;
-    ifstream ifFile(szFile);
+    std::ifstream ifFile(szFile);
     if (!ifFile.good())
     {
         ifFile.close();
@@ -229,8 +232,8 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
         return -1;
     }
 
-	ofstream of(sOutFile.c_str());
-	ofstream ofInfo((sOutFile+".info").c_str());
+	std::ofstream of(sOutFile.c_str());
+	std::ofstream ofInfo((sOutFile+".info").c_str());
 	if (!of.good() || !ofInfo.good())
 	{
 		cout << "can not write files..." << endl;
@@ -244,7 +247,7 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
 	VUINT vLens;
 	VUCHAR vSeqs;
 	VNAMES vNames;
-	vector<double> vFreq(strlen(murphy10r), 0);
+	std::vector<double> vFreq(strlen(murphy10r), 0);
 	VUINT vWordCnts(m_unTotalIdx, 0);
 	uint unMedian = 0;
 	long int lnTotalAa = 0;
@@ -299,22 +302,22 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
 					{
 						if (bFullId == false)
 						{
-							vNames.push_back(string(itSt+1, find(itSt+1, itBeg-1, ' ')));
+							vNames.push_back(std::string(itSt+1, find(itSt+1, itBeg-1, ' ')));
 						}
 						else
 						{
-							vNames.push_back(string(itSt+1, itBeg-1));
+							vNames.push_back(std::string(itSt+1, itBeg-1));
 						}
 						vSeqs.insert(vSeqs.end(), itBeg+i*1848, itBeg+2048+i*1848);
 						vLens.push_back(vSeqs.size());
 					}
 					if (bFullId == false)
 					{
-						vNames.push_back(string(itSt+1, find(itSt+1, itBeg-1, ' ')));
+						vNames.push_back(std::string(itSt+1, find(itSt+1, itBeg-1, ' ')));
 					}
 					else
 					{
-						vNames.push_back(string(itSt+1, itBeg-1));
+						vNames.push_back(std::string(itSt+1, itBeg-1));
 					}
 					vSeqs.insert(vSeqs.end(), itBeg+(nNum-1)*1848, itEnd);
 					vLens.push_back(vSeqs.size());
@@ -323,11 +326,11 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
 				{
 					if (bFullId == false)
 					{
-						vNames.push_back(string(itSt+1, find(itSt+1, itBeg-1, ' ')));
+						vNames.push_back(std::string(itSt+1, find(itSt+1, itBeg-1, ' ')));
 					}
 					else
 					{
-						vNames.push_back(string(itSt+1, itBeg-1));
+						vNames.push_back(std::string(itSt+1, itBeg-1));
 					}
 					vSeqs.insert(vSeqs.end(), itBeg, itEnd);
 					vLens.push_back(vSeqs.size());
@@ -374,7 +377,7 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
 					int m = nLen1 - nOff1;
 					int n = 0;
 					ushort nSuff = 0;
-					//string sSuff;
+					//std::string sSuff;
 					if (m >= 4)
 					{
 						nSuff |= (m_aCode2Ten[p1[n]]) << 12;
@@ -461,7 +464,7 @@ int CHashSearch::BuildDHash(const char* szFile, string& sOutFile, int nSplitNum,
 }
 
 
-int CHashSearch::BuildQHash(istream& input, int nQueryType, map<string,char>& mTransTable, map<char,char>& mComple, Seg* seg, Seg* segsht, vector<uchar>& vSeqs, vector<uint>& vLens, VNAMES& vNames)
+int CHashSearch::BuildQHash(std::istream& input, int nQueryType, std::map<std::string,char>& mTransTable, std::map<char,char>& mComple, Seg* seg, Seg* segsht, std::vector<uchar>& vSeqs, std::vector<uint>& vLens, VNAMES& vNames)
 {
 	char cIdSt = '>';
 	char cSeqEd = '>';
@@ -610,13 +613,13 @@ int CHashSearch::BuildQHash(istream& input, int nQueryType, map<string,char>& mT
 		if (true == m_bSeqType)
 		{
 			// query is dna
-			vector<char> vTran;
+			std::vector<char> vTran;
 			vTran.reserve(1024);
 			while (itEd != itStop)
 			{
 				++itBeg;
-				vNames.push_back(/*'>'+*/string(itSt+1, find(itSt+1, itBeg-1, ' ')));
-				vector<char> vS(itBeg, itEd-1);
+				vNames.push_back(/*'>'+*/std::string(itSt+1, find(itSt+1, itBeg-1, ' ')));
+				std::vector<char> vS(itBeg, itEd-1);
 				for (ITER itUpper = vS.begin(); itUpper != vS.end(); ++itUpper)
 				{
 					if (*itUpper >= 'a' && *itUpper <= 'z')
@@ -638,7 +641,7 @@ int CHashSearch::BuildQHash(istream& input, int nQueryType, map<string,char>& mT
 						reverse(vS.begin(), vS.end());
 						for (uint nn = 0; nn < vS.size(); ++nn)
 						{
-							map<char, char>::iterator it = mComple.find(vS[nn]);
+							std::map<char, char>::iterator it = mComple.find(vS[nn]);
 							if (it != mComple.end())
 							{
 								vS[nn] = it->second;
@@ -656,7 +659,7 @@ int CHashSearch::BuildQHash(istream& input, int nQueryType, map<string,char>& mT
 
 					for (; pSt < pEd; pSt += 3)
 					{
-						map<string, char>::iterator it = mTransTable.find(string(pSt, 3));
+						std::map<std::string, char>::iterator it = mTransTable.find(std::string(pSt, 3));
 						if (it != mTransTable.end())
 						{
 							vTran.push_back(it->second);
@@ -712,7 +715,7 @@ int CHashSearch::BuildQHash(istream& input, int nQueryType, map<string,char>& mT
 			while (itEd != itStop)
 			{
 				++itBeg;
-				vNames.push_back(string(itSt+1, find(itSt+1, itBeg-1, ' ')));
+				vNames.push_back(std::string(itSt+1, find(itSt+1, itBeg-1, ' ')));
 
 				for (ITER itUpper = itBeg; itUpper != itEd-1; ++itUpper)
 				{
@@ -743,16 +746,16 @@ int CHashSearch::BuildQHash(istream& input, int nQueryType, map<string,char>& mT
 }
 
 
-void CHashSearch::Search(string& sDbPre, int nSeqNum, vector<uchar>& vQSeqs, vector<uint>& vQLens, VNAMES& vQNames)
+void CHashSearch::Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& vQSeqs, std::vector<uint>& vQLens, VNAMES& vQNames)
 {
-	ifstream ifD(sDbPre.c_str());
-	ifstream ifDInfo((sDbPre+".info").c_str());
+	std::ifstream ifD(sDbPre.c_str());
+	std::ifstream ifDInfo((sDbPre+".info").c_str());
 	if (!ifD.good() || !ifDInfo.good())
 	{
-		ifstream if1((sDbPre+".des").c_str());
-		ifstream if2((sDbPre+".des").c_str());
-		ifstream if3((sDbPre+".des").c_str());
-		ifstream if4((sDbPre+".des").c_str());
+		std::ifstream if1((sDbPre+".des").c_str());
+		std::ifstream if2((sDbPre+".des").c_str());
+		std::ifstream if3((sDbPre+".des").c_str());
+		std::ifstream if4((sDbPre+".des").c_str());
 		if (if1.good()
 			&& if2.good()
 			&& if3.good()
@@ -780,7 +783,7 @@ void CHashSearch::Search(string& sDbPre, int nSeqNum, vector<uchar>& vQSeqs, vec
 	archive::binary_iarchive iaD(ifD);
 	archive::binary_iarchive iaDInfo(ifDInfo);
 
-	vector<double> vFreq;
+	std::vector<double> vFreq;
 	VUINT vWordCnts(m_unTotalIdx, 0);
 	int nDbBlockNum = 0;
 	long int lnTotalAa;
@@ -817,7 +820,7 @@ void CHashSearch::Search(string& sDbPre, int nSeqNum, vector<uchar>& vQSeqs, vec
 			m_ofTemp.close();
 
 			m_llOutCum = 0;
-			ofstream ofOut((m_sOutBase+".tmp"+lexical_cast<string>(j-1)+".idx").c_str());
+			std::ofstream ofOut((m_sOutBase+".tmp"+lexical_cast<std::string>(j-1)+".idx").c_str());
 			archive::binary_oarchive oaOut(ofOut);
 			oaOut << m_vOutIdx;
 			ofOut.close();
@@ -829,12 +832,12 @@ void CHashSearch::Search(string& sDbPre, int nSeqNum, vector<uchar>& vQSeqs, vec
 		}
 		m_nSeqBase = 0;
 
-		m_ofTemp.open((m_sOutBase+".tmp"+lexical_cast<string>(j)).c_str());
+		m_ofTemp.open((m_sOutBase+".tmp"+lexical_cast<std::string>(j)).c_str());
 
 		// read db file and store info
 		MINDEX vDHash(m_unTotalIdx, VUINT()); // all k-mer of database
-		vector<uint> vDLens;
-		vector<uchar> vDSeqs;
+		std::vector<uint> vDLens;
+		std::vector<uchar> vDSeqs;
 		VNAMES vDNames;
 		VCOMP vComp;
 
@@ -876,7 +879,7 @@ void CHashSearch::Search(string& sDbPre, int nSeqNum, vector<uchar>& vQSeqs, vec
 		m_ofTemp.close();
 		m_llOutCum = 0;
 
-		ofstream ofOut((m_sOutBase+".tmp"+lexical_cast<string>(nDbBlockNum-1)+".idx").c_str());
+		std::ofstream ofOut((m_sOutBase+".tmp"+lexical_cast<std::string>(nDbBlockNum-1)+".idx").c_str());
 		archive::binary_oarchive oaOut(ofOut);
 		oaOut << m_vOutIdx;
 		ofOut.close();
@@ -962,8 +965,8 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 	{
 		m_sOutBase.assign(szOFile);
 
-		string sDel = m_sOutBase + ".aln";
-		ifstream iffTest;
+		std::string sDel = m_sOutBase + ".aln";
+		std::ifstream iffTest;
 
 		iffTest.open(sDel.c_str());
 		if (iffTest.good())
@@ -991,7 +994,7 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 	timeinfo = localtime(&rawtime);
 	m_sStartTime.assign(asctime(timeinfo));
 
-	ifstream fIn;
+	std::ifstream fIn;
 	if (m_sQFile != "stdin")
 	{
 		fIn.open(m_sQFile.c_str());
@@ -1002,10 +1005,10 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 			exit(1);
 		}
 	}
-	istream& input = (m_sQFile!="stdin") ? fIn : cin;
+	std::istream& input = (m_sQFile!="stdin") ? fIn : std::cin;
 
-	map<string, char> mTransTable;
-	map<char, char> mComple;
+	std::map<std::string, char> mTransTable;
+	std::map<char, char> mComple;
 	Seg* seg = NULL;
 	Seg* segsht = NULL;
 	//if (true == m_bSeqType)
@@ -1014,7 +1017,7 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 		for (int i = 0; i < TOTCODON; ++i)
 		{
 			const char* p = nt[i];
-			mTransTable[string(p, 3)] = aa[i];
+			mTransTable[std::string(p, 3)] = aa[i];
 		}
 
 		mComple['A'] = 'T';
@@ -1032,13 +1035,13 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 		segsht = new Seg(DEFSEED);
 	}
 	
-	vector<uchar> vQSeqs;
-	vector<uint> vQLens;
+	std::vector<uchar> vQSeqs;
+	std::vector<uint> vQLens;
 	VNAMES vQNames;
 	int nSeqNum = 0;
 	while ((nSeqNum=BuildQHash(input, nQueryType, mTransTable, mComple, seg, segsht, vQSeqs, vQLens, vQNames)) > 0)
 	{
-		string sDbOut(szDBFile);
+		std::string sDbOut(szDBFile);
 		Search(sDbOut, nSeqNum, vQSeqs, vQLens, vQNames);
 		vQSeqs.clear();
 		vQLens.clear();
@@ -1047,7 +1050,7 @@ void CHashSearch::Process(char* szDBFile, char* szQFile, char* szOFile, int nStd
 
 	if (m_sQFile != "stdin")
 	{
-		((ifstream&)input).close();
+		((std::ifstream&)input).close();
 	}
 
 	if (seg != NULL)
@@ -1066,7 +1069,7 @@ void CHashSearch::Process(char* szDBFile, char* szDbHash, bool bFullId, int nSpl
 	m_unMer = unMer;
 	m_unTotalIdx = lexical_cast<uint>(pow(10.0, int(m_unMer)));
 
-	string sDbOut(szDbHash);
+	std::string sDbOut(szDbHash);
 	BuildDHash(szDBFile, sDbOut, nSplitNum, bFullId);
 }
 
@@ -1140,7 +1143,7 @@ void CHashSearch::Searching(int k, CQrPckg& Query, CDbPckg& Db)
 		CAlnPckg QrAln(pQ, unQLen, 0);
 		
 		// build invalid index position
-		vector<char> vValid(unQLen, 0);
+		std::vector<char> vValid(unQLen, 0);
 		for (uint xx = 0; xx < unQLen; ++xx)
 		{
 			vValid[xx] = m_aCode2Ten[pQ[xx]];
@@ -1240,7 +1243,7 @@ void CHashSearch::Searching(int k, CQrPckg& Query, CDbPckg& Db)
 				}
 			}
 
-			vector<uchar> vExtra(pQ+unQSeedBeg+m_unMer, pQ+unQSeedBeg+unLocalSeed);
+			std::vector<uchar> vExtra(pQ+unQSeedBeg+m_unMer, pQ+unQSeedBeg+unLocalSeed);
 			for (uint idx = 0; idx < vExtra.size(); ++idx)
 			{
 				vExtra[idx] = m_aCode2Ten[vExtra[idx]];
@@ -1366,7 +1369,7 @@ void CHashSearch::Searching(int k, CQrPckg& Query, CDbPckg& Db)
 struct CompSeed
 {
 	CompSeed(CDbPckg& Db, uint unMer, uchar* aCode2Ten) : m_Db(Db), m_unMer(unMer), m_aCode2Ten(aCode2Ten) {}
-	bool operator() (const uint& unPos, const vector<uchar>& vExtra)
+	bool operator() (const uint& unPos, const std::vector<uchar>& vExtra)
 	{
 		uint unIdx = unPos >> 11;
 		uint unDSeedBeg = unPos & 0x000007FF;
@@ -1409,7 +1412,7 @@ struct CompSeed
 		return bLess;
 	}
 
-	bool operator() (const vector<uchar>& vExtra, uint& unPos)
+	bool operator() (const std::vector<uchar>& vExtra, uint& unPos)
 	{
 		uint unIdx = unPos >> 11;
 		uint unDSeedBeg = unPos & 0x000007FF;
@@ -1571,8 +1574,8 @@ struct CompShortUp
 	}
 };
 
-int CHashSearch::ExtendSeq2Set(int nSeed, uint unLocalSeedLen, vector<uchar>& vExtra,
-		int nQSeqIdx, CAlnPckg& QrAln, int nQOriLen, vector<char>& vValid,
+int CHashSearch::ExtendSeq2Set(int nSeed, uint unLocalSeedLen, std::vector<uchar>& vExtra,
+		int nQSeqIdx, CAlnPckg& QrAln, int nQOriLen, std::vector<char>& vValid,
 		VUINT& vDSet, CDbPckg& Db,
 		VNAMES& vQNames, VNAMES& vDNames,
 		MRESULT& mRes, int nTreadID)
@@ -1815,9 +1818,9 @@ bool CHashSearch::AlignSeqs(int nSeed, CAlnPckg& QrAln, CAlnPckg& DbAln,  uint& 
 	{
 		++m_unGapExt;
 		//cout << "1 hit ..." << endl;
-		// vector for alignment path
-		vector<char> vMode;
-		vector<short> vLen;
+		// std::vector for alignment path
+		std::vector<char> vMode;
+		std::vector<short> vLen;
 
 		// forward gapped alignment
 		int exta = 0;
@@ -1848,14 +1851,14 @@ bool CHashSearch::AlignSeqs(int nSeed, CAlnPckg& QrAln, CAlnPckg& DbAln,  uint& 
 		nDOff = DbAln.m_unSeedBeg - stAlnmnt.nDBwd;
 		if (nQOff > 2 && nDOff > 2)
 		{
-			vector<uchar> vQ;
+			std::vector<uchar> vQ;
 			vQ.reserve(nQOff);
 			for (int i = nQOff-1; i >= 0; --i)
 			{
 				vQ.push_back(QrAln.m_pSeq[i]);
 			}
 			pQAlign = &vQ[0];
-			vector<uchar> vD;
+			std::vector<uchar> vD;
 			vD.reserve(nDOff);
 			for (int i = nDOff-1; i >= 0; --i)
 			{
@@ -1943,7 +1946,7 @@ int CHashSearch::AlignBwd(uchar *queryseq, uchar *dataseq, int pos1, int pos2, i
 }
 
 
-int CHashSearch::AlignGapped(uchar *seq1, uchar *seq2, int M, int N, int *ext1, int *ext2, int *match_len, int *gap, vector<char>& vMode, vector<short>& vLen, int nTreadID)
+int CHashSearch::AlignGapped(uchar *seq1, uchar *seq2, int M, int N, int *ext1, int *ext2, int *match_len, int *gap, std::vector<char>& vMode, std::vector<short>& vLen, int nTreadID)
 {
     int	i, j;
     int	t, s, e, c, d, wa;
@@ -1966,9 +1969,9 @@ int CHashSearch::AlignGapped(uchar *seq1, uchar *seq2, int M, int N, int *ext1, 
     int	bb_pre, be_pre;
     //these two parameters will be adjusted during the alignment based on the dropoff score
 
-	vector<vector<char> >& trace = m_vTrace[nTreadID];
-	vector<vector<char> >& etrace = m_vETrace[nTreadID];
-	vector<vector<char> >& dtrace = m_vDTrace[nTreadID];
+	std::vector<std::vector<char> >& trace = m_vTrace[nTreadID];
+	std::vector<std::vector<char> >& etrace = m_vETrace[nTreadID];
+	std::vector<std::vector<char> >& dtrace = m_vDTrace[nTreadID];
 
 	// the aligning sequences may be longer than 4096
 	bool bModify = false;
@@ -1980,9 +1983,9 @@ int CHashSearch::AlignGapped(uchar *seq1, uchar *seq2, int M, int N, int *ext1, 
 		trace.clear();
 		etrace.clear();
 		dtrace.clear();
-		trace.assign(nSz, vector<char>(nSz));
-		etrace.assign(nSz, vector<char>(nSz));
-		dtrace.assign(nSz, vector<char>(nSz));
+		trace.assign(nSz, std::vector<char>(nSz));
+		etrace.assign(nSz, std::vector<char>(nSz));
+		dtrace.assign(nSz, std::vector<char>(nSz));
 	}
 
     trace[0][0] = '0';
@@ -2193,9 +2196,9 @@ int CHashSearch::AlignGapped(uchar *seq1, uchar *seq2, int M, int N, int *ext1, 
 		trace.clear();
 		etrace.clear();
 		dtrace.clear();
-		trace.assign(nMemory, vector<char>(nMemory));
-		etrace.assign(nMemory, vector<char>(nMemory));
-		dtrace.assign(nMemory, vector<char>(nMemory));
+		trace.assign(nMemory, std::vector<char>(nMemory));
+		etrace.assign(nMemory, std::vector<char>(nMemory));
+		dtrace.assign(nMemory, std::vector<char>(nMemory));
 	}
 
     return maxs;
@@ -2311,12 +2314,12 @@ void CHashSearch::CalRes(int nQIdx, uchar* pQ, int nQOriLen, uint unQSeedBeg, in
 		}
 	}
 		
-	string sQ;
-	string sD;
+	std::string sQ;
+	std::string sD;
 	Decode(vQ, sQ);
 	Decode(vD, sD);
 
-	string sInfo;
+	std::string sInfo;
 	for (uint i = 0; i < vQ.size(); ++i)
 	{
 		if (vQ[i] == vD[i])
@@ -2333,7 +2336,7 @@ void CHashSearch::CalRes(int nQIdx, uchar* pQ, int nQOriLen, uint unQSeedBeg, in
 		}
 	}
 
-	MRESULT::iterator it = mRes.lower_bound(pair<int, int>(nQIdx/m_nIdxScl, nDIdx));
+	MRESULT::iterator it = mRes.lower_bound(std::pair<int, int>(nQIdx/m_nIdxScl, nDIdx));
 	/****************************************************************/
 	// for sum evalue, comment this
 	// note: here, the hits are stored according to it's real query index, not 1->6 frame query index
@@ -2367,7 +2370,7 @@ void CHashSearch::CalRes(int nQIdx, uchar* pQ, int nQOriLen, uint unQSeedBeg, in
 	else
 	/****************************************************************/
 	{
-		MRESULT::iterator itTmp = mRes.insert(it, MRESULT::value_type(pair<int, int>(nQIdx/m_nIdxScl, nDIdx), CHitUnit()));
+		MRESULT::iterator itTmp = mRes.insert(it, MRESULT::value_type(std::pair<int, int>(nQIdx/m_nIdxScl, nDIdx), CHitUnit()));
 		CHitUnit& st = (*itTmp).second;
 		st.nQrLen = nQOriLen;
 		st.nDbIdx =	nDIdx; 
@@ -2389,7 +2392,7 @@ void CHashSearch::CalRes(int nQIdx, uchar* pQ, int nQOriLen, uint unQSeedBeg, in
 		st.sQ = sQ;
 		st.sInfo = sInfo;
 		st.sD = sD;
-		//mRes.insert(it, MRESULT::value_type(pair<int, int>(nQIdx/m_nIdxScl, nDIdx), st));
+		//mRes.insert(it, MRESULT::value_type(std::pair<int, int>(nQIdx/m_nIdxScl, nDIdx), st));
 	}
 }
 
@@ -2413,7 +2416,7 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 	MIT it = mRes.begin();
 	int nQrIdx = (*it).first.first;
 	MRESULT::iterator itFind = mRes.end();
-	vector<CHitUnit> vTemp;
+	std::vector<CHitUnit> vTemp;
 	vTemp.reserve(distance(it, itFind));
 	
 	// for sum evalue, comment this
@@ -2449,13 +2452,13 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 		return;
 	}
 
-	uint nMax = max(m_nMaxOut, m_nMaxM8);
-	nMax = min((uint)vTemp.size(), nMax);
-	vector<CHitUnit>::iterator itPrint = vTemp.begin()+nMax;
+	uint nMax = std::max(m_nMaxOut, m_nMaxM8);
+	nMax = std::min((uint)vTemp.size(), nMax);
+	std::vector<CHitUnit>::iterator itPrint = vTemp.begin()+nMax;
 	partial_sort(vTemp.begin(), itPrint, vTemp.end(), ComptorWrapper(m_pComptor));
 
 	int nBegStrAligned = 10;
-	vector<CHitUnit>::iterator itSt = vTemp.begin();
+	std::vector<CHitUnit>::iterator itSt = vTemp.begin();
 	for (; itSt != itPrint; ++itSt)
 	{
 		CHitUnit& st= *itSt;
@@ -2467,8 +2470,8 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 
 		st.sInfo.insert(0, nBegStrAligned+1, ' ');
 
-		string sQNum = lexical_cast<string>(st.nQBeg);
-		st.sQ = string(nBegStrAligned-sQNum.size(), ' ') + sQNum + " " + st.sQ + " " + lexical_cast<string>(st.nQEnd);
+		std::string sQNum = lexical_cast<std::string>(st.nQBeg);
+		st.sQ = std::string(nBegStrAligned-sQNum.size(), ' ') + sQNum + " " + st.sQ + " " + lexical_cast<std::string>(st.nQEnd);
 
 		++st.nDSt;
 		++st.nDEd;
@@ -2479,8 +2482,8 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 		}
 		st.nDSt = 1848*nFac+st.nDSt;
 		st.nDEd = 1848*nFac+st.nDEd;
-		string sDNum = lexical_cast<string>(st.nDSt);
-		st.sD = string(nBegStrAligned-sDNum.size(), ' ') + sDNum + " " + st.sD + " " + lexical_cast<string>(st.nDEd);
+		std::string sDNum = lexical_cast<std::string>(st.nDSt);
+		st.sD = std::string(nBegStrAligned-sDNum.size(), ' ') + sDNum + " " + st.sD + " " + lexical_cast<std::string>(st.nDEd);
 
 		st.sQName = Query.m_vNames[nQrIdx];
 		st.sDName = Db.m_vNames[st.nDbIdx];
@@ -2518,7 +2521,7 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 		}
 		vTemp.resize(nl);
 
-		stringstream sOutput;
+		std::stringstream sOutput;
 		archive::binary_oarchive oa(sOutput);
 		oa << vTemp;
 
@@ -2541,9 +2544,9 @@ void CHashSearch::PrintRes(MRESULT& mRes, int nTreadID, CQrPckg& Query, CDbPckg&
 }
 
 
-void CHashSearch::SumEvalue(vector<CHitUnit>& v, int nSt, int nEd, int nLen, int nTreadID)
+void CHashSearch::SumEvalue(std::vector<CHitUnit>& v, int nSt, int nEd, int nLen, int nTreadID)
 {
-	typedef vector<CHitUnit>::iterator STIT;
+	typedef std::vector<CHitUnit>::iterator STIT;
 	STIT itSt = v.begin() + nSt;
 	STIT itEd = v.begin() + nEd;
 	// sort by nFrame
@@ -2556,7 +2559,7 @@ void CHashSearch::SumEvalue(vector<CHitUnit>& v, int nSt, int nEd, int nLen, int
 	int nDisNeg = distance(itDir, itEd);
 	if (nDisPos > 1 || nDisNeg > 1)
 	{
-		vector<CHitUnit> vRes;
+		std::vector<CHitUnit> vRes;
 		STIT itStart = itSt;
 		STIT itEnd = itDir;
 		for (int i = 0; i < 2; ++i)
@@ -2581,7 +2584,7 @@ void CHashSearch::SumEvalue(vector<CHitUnit>& v, int nSt, int nEd, int nLen, int
 			sort(itStart, itEnd, CompQSt());
 			stable_sort(itStart, itEnd, ComptorWrapper(m_pComptor));
 			// check overlap and logevalue
-			vector<CHitUnit> vNew;
+			std::vector<CHitUnit> vNew;
 			vNew.push_back(*itStart);
 			for (STIT itTemp = itStart+1; itTemp!=itEnd; ++itTemp)
 			{
@@ -2676,8 +2679,8 @@ void CHashSearch::GuessTotSeq(const char* szDBFile, long int& lnSeqNum, long int
 {
 	lnSeqNum = 0;
 	lnAaNum = 0;
-	ifstream fIn(szDBFile);
-	string s;
+	std::ifstream fIn(szDBFile);
+	std::string s;
 	while (fIn.good())
 	{
 		getline(fIn, s);
@@ -2695,10 +2698,10 @@ void CHashSearch::GuessTotSeq(const char* szDBFile, long int& lnSeqNum, long int
 
 
 
-void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
+void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, std::string& sDbPre)
 {
-	ostream* poAln = NULL;
-	ostream* poM8 = NULL;
+	std::ostream* poAln = NULL;
+	std::ostream* poM8 = NULL;
 
 	if (m_nStdout == 2)
 	{
@@ -2706,10 +2709,10 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
 	}
 	else if (!m_sOutBase.empty() && m_nMaxOut != 0)
 	{
-		poAln = new ofstream((m_sOutBase+".aln").c_str(),ios_base::out|ios_base::app);
+		poAln = new std::ofstream((m_sOutBase+".aln").c_str(),std::ios_base::out|std::ios_base::app);
 		if (!poAln->good())
 		{
-			((ofstream*)poAln)->close();
+			((std::ofstream*)poAln)->close();
 			delete poAln;
 			cout << "can not open the file: " << m_sOutBase+".aln" << endl;
 			exit(1);
@@ -2722,10 +2725,10 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
 	}
 	else if (!m_sOutBase.empty() && m_nMaxM8 != 0)
 	{
-		poM8 = new ofstream((m_sOutBase+".m8").c_str(),ios_base::out|ios_base::app);
+		poM8 = new std::ofstream((m_sOutBase+".m8").c_str(),std::ios_base::out|std::ios_base::app);
 		if (!poM8->good())
 		{
-			((ofstream*)poM8)->close();
+			((std::ofstream*)poM8)->close();
 			delete poM8;
 			cout << "can not open the file: " << m_sOutBase+".m8" << endl;
 			exit(1);
@@ -2752,17 +2755,17 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
 	
 	if (m_bXml)
 	{
-		m_ofXml.open((m_sOutBase+".xml").c_str(),ios_base::out|ios_base::app);
+		m_ofXml.open((m_sOutBase+".xml").c_str(),std::ios_base::out|std::ios_base::app);
 		PrintXmlBegin(sDbPre);
 	}
 
-	long long unMax = max(m_nMaxOut, m_nMaxM8);
-	vector<CHitUnit> v;
-	vector<CMergeUnit*> vMergeUnit;
+	long long unMax = std::max(m_nMaxOut, m_nMaxM8);
+	std::vector<CHitUnit> v;
+	std::vector<CMergeUnit*> vMergeUnit;
 
 	for (int i = 0; i < nDbBlockNum; ++i)
 	{
-		string sName = m_sOutBase+".tmp"+lexical_cast<string>(i);
+		std::string sName = m_sOutBase+".tmp"+lexical_cast<std::string>(i);
 		CMergeUnit* p = new CMergeUnit(sName.c_str());
 		vMergeUnit.push_back(p);
 	}
@@ -2770,7 +2773,7 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
 	int nLastIdx = 0;
 	for (int i = 0; i < nDbBlockNum; ++i)
 	{
-		nLastIdx = max(nLastIdx, vMergeUnit[i]->GetLast());
+		nLastIdx = std::max(nLastIdx, vMergeUnit[i]->GetLast());
 	}
 
 	/**************************************************************/
@@ -2792,7 +2795,7 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
 		}
 		/***********************************************************/
 
-		uint n = min(unMax, (long long)v.size());
+		uint n = std::min(unMax, (long long)v.size());
 		partial_sort(v.begin(), v.begin()+n, v.end(), ComptorWrapper(m_pComptor));
 		v.resize(n);
 
@@ -2821,14 +2824,14 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
 
 	if (poAln && m_nStdout != 2)
 	{
-		((ofstream*)poAln)->close();
+		((std::ofstream*)poAln)->close();
 		delete poAln;
 		poAln = NULL;
 	}
 
 	if (poM8 && m_nStdout != 1)
 	{
-		((ofstream*)poM8)->close();
+		((std::ofstream*)poM8)->close();
 		delete poM8;
 		poM8 = NULL;
 	}
@@ -2844,7 +2847,7 @@ void CHashSearch::MergeRes(int nDbBlockNum, VNAMES& vQNames, string& sDbPre)
 int CHashSearch::GuessQueryType(POOL& vPool)
 {
 	// read some reads
-	vector<uchar> seq;
+	std::vector<uchar> seq;
 	ITER itStop = vPool.end();
 	ITER itSt = find(vPool.begin(), itStop, '>');
 	ITER itEd = find(itSt+1, itStop, '>');
@@ -2888,9 +2891,9 @@ int CHashSearch::GuessQueryType(POOL& vPool)
 }
 
 
-void CHashSearch::PrintAln(vector<CHitUnit>& v, ostream& of)
+void CHashSearch::PrintAln(std::vector<CHitUnit>& v, std::ostream& of)
 {
-	int nPrint = min((long long)v.size(), m_nMaxOut);
+	int nPrint = std::min((long long)v.size(), m_nMaxOut);
 	for (int i = 0; i < nPrint; ++i)
 	{
 		CHitUnit& c = v[i];
@@ -2921,27 +2924,27 @@ void CHashSearch::PrintAln(vector<CHitUnit>& v, ostream& of)
 }
 
 
-void CHashSearch::PrintM8(vector<CHitUnit>& v, ostream& of)
+void CHashSearch::PrintM8(std::vector<CHitUnit>& v, std::ostream& of)
 {
-	int nPrint = min((long long)v.size(), m_nMaxM8);
+	int nPrint = std::min((long long)v.size(), m_nMaxM8);
 	for (int i = 0; i < nPrint; ++i)
 	{
 		CHitUnit& c = v[i];
 
 		of << c.sQName
-			<< "\t" << c.sDName
-			<< setprecision(1) << setiosflags(ios::fixed)
-			<< "\t" << c.dIdent
-			<< "\t"	<< c.nAlnLen
-			<< "\t"	<< c.nMismatch
-			<< "\t"	<< c.nGapOpen 
-			<< "\t" << c.nQBeg
-			<< "\t" << c.nQEnd
-			<< "\t" << c.nDSt
-			<< "\t" << c.nDEd;
+		   << "\t" << c.sDName
+		   << std::setprecision(1) << std::setiosflags(std::ios::fixed)
+		   << "\t" << c.dIdent
+		   << "\t" << c.nAlnLen
+		   << "\t" << c.nMismatch
+		   << "\t" << c.nGapOpen
+		   << "\t" << c.nQBeg
+		   << "\t" << c.nQEnd
+		   << "\t" << c.nDSt
+		   << "\t" << c.nDEd;
 		if (m_bLogE == true)
 		{
-			of << setprecision(1) << setiosflags(ios::fixed)
+			of << std::setprecision(1) << std::setiosflags(std::ios::fixed)
 				<< "\t"	<< c.dEValue;
 		}
 		else
@@ -2949,22 +2952,22 @@ void CHashSearch::PrintM8(vector<CHitUnit>& v, ostream& of)
 			c.dEValue = pow(10, c.dEValue);
 			if (c.dEValue < 0.01)
 			{
-				of << setprecision(1) << setiosflags(ios::scientific) << setiosflags(ios::fixed)
+				of << std::setprecision(1) << std::setiosflags(std::ios::scientific) << std::setiosflags(std::ios::fixed)
 					<< "\t"	<< c.dEValue;
-				of << resetiosflags(ios::scientific);
+				of << std::resetiosflags(std::ios::scientific);
 			}
 			else if (c.dEValue < 10.0)
 			{
-				of << setprecision(2) << setiosflags(ios::fixed)
+				of << std::setprecision(2) << std::setiosflags(std::ios::fixed)
 					<< "\t"	<< c.dEValue;
 			}
 			else
 			{
-				of << setprecision(0) << setiosflags(ios::fixed)
+				of << std::setprecision(0) << std::setiosflags(std::ios::fixed)
 					<< "\t"	<< c.dEValue;
 			}
 		}
-		of << setprecision(1) << setiosflags(ios::fixed)
+		of << std::setprecision(1) << std::setiosflags(std::ios::fixed)
 			<< "\t"	<< c.dBits 
 			<< "\n";
 	}
@@ -2974,13 +2977,13 @@ void CHashSearch::PrintM8(vector<CHitUnit>& v, ostream& of)
 template<class T>
 void CHashSearch::PrintXmlLine(const char* sTag, T s)
 {
-	m_ofXml << string(m_unXmlSp, ' ') << "<" << sTag << ">" << s << "</" << sTag << ">" << "\n";
+	m_ofXml << std::string(m_unXmlSp, ' ') << "<" << sTag << ">" << s << "</" << sTag << ">" << "\n";
 }
 
 
 void CHashSearch::PrintXmlTag(const char* sTag)
 {
-	m_ofXml << string(m_unXmlSp, ' ') << "<" << sTag << ">" << "\n";
+	m_ofXml << std::string(m_unXmlSp, ' ') << "<" << sTag << ">" << "\n";
 	m_unXmlSp += 2;
 }
 
@@ -2988,11 +2991,11 @@ void CHashSearch::PrintXmlTag(const char* sTag)
 void CHashSearch::PrintXmlTagR(const char* sTag)
 {
 	m_unXmlSp -= 2;
-	m_ofXml << string(m_unXmlSp, ' ') << "</" << sTag << ">" << "\n";
+	m_ofXml << std::string(m_unXmlSp, ' ') << "</" << sTag << ">" << "\n";
 }
 
 
-void CHashSearch::PrintXmlBegin(string& sDbPre)
+void CHashSearch::PrintXmlBegin(std::string& sDbPre)
 {
 	m_ofXml << "<?xml version=\"1.0\"?>" << "\n";
 	PrintXmlTag("Output");
@@ -3007,16 +3010,16 @@ void CHashSearch::PrintXmlBegin(string& sDbPre)
 	{
 		if (m_bLogE == true)
 		{
-			PrintXmlLine("Parameters_log-expect_evalue", lexical_cast<string>(m_dThr));
+			PrintXmlLine("Parameters_log-expect_evalue", lexical_cast<std::string>(m_dThr));
 		}
 		else
 		{
-			PrintXmlLine("Parameters_expect_evalue", lexical_cast<string>(pow(10,m_dThr)));
+			PrintXmlLine("Parameters_expect_evalue", lexical_cast<std::string>(pow(10,m_dThr)));
 		}
 	}
 	else
 	{
-		PrintXmlLine("Parameters_bits-expect", lexical_cast<string>(m_dThr));
+		PrintXmlLine("Parameters_bits-expect", lexical_cast<std::string>(m_dThr));
 	}
 	PrintXmlLine("Parameters_gap-open", "11");
 	PrintXmlLine("Parameters_gap-extend", "1");
@@ -3027,23 +3030,23 @@ void CHashSearch::PrintXmlBegin(string& sDbPre)
 }
 
 
-void CHashSearch::PrintXml(vector<CHitUnit>& v, int nIdx)
+void CHashSearch::PrintXml(std::vector<CHitUnit>& v, int nIdx)
 {
 	PrintXmlTag("Iteration");
-	PrintXmlLine("Iteration_iter-num", lexical_cast<string>(m_unXmlCnt++));
-	//PrintXmlLine("Iteration_query-ID", "lcl|"+lexical_cast<string>(nIdx));
+	PrintXmlLine("Iteration_iter-num", lexical_cast<std::string>(m_unXmlCnt++));
+	//PrintXmlLine("Iteration_query-ID", "lcl|"+lexical_cast<std::string>(nIdx));
 	PrintXmlLine("Iteration_query-def", v[0].sQName);
 	PrintXmlLine("Iteration_query-len", v[0].nQrLen);
 	PrintXmlTag("Iteration_hits");
 
-	int nPrint = min((long long)v.size(), m_nMaxOut);
+	int nPrint = std::min((long long)v.size(), m_nMaxOut);
 	for (int i = 0; i < nPrint; ++i)
 	{
 		CHitUnit& c = v[i];
 
 		PrintXmlTag("Hit");
-		PrintXmlLine("Hit_num", lexical_cast<string>(i+1));
-		//PrintXmlLine("Hit_id", "gnl|"+lexical_cast<string>(c.nDbIdx));
+		PrintXmlLine("Hit_num", lexical_cast<std::string>(i+1));
+		//PrintXmlLine("Hit_id", "gnl|"+lexical_cast<std::string>(c.nDbIdx));
 		PrintXmlLine("Hit_def", c.sDName);
 		//PrintXmlLine("Hit_accession", c.nDbIdx);
 		PrintXmlLine("Hit_len", c.nDbLen);
