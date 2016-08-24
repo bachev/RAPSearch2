@@ -30,11 +30,6 @@ using std::endl;
 
 using namespace boost;
 
-// BaCh 23.08.2016
-// "boost::threadpool" is actually NOT part of BOOST, it's http://threadpool.sourceforge.net/
-// it probably was intended to be included in BOOST, but apparently never made it
-using namespace boost::threadpool;
-
 
 boost::mutex muMonitor;
 
@@ -803,7 +798,12 @@ void CHashSearch::Search(std::string& sDbPre, int nSeqNum, std::vector<uchar>& v
 	// set BlastStat
 	InitAlignPara(m_bSeqType, lnTotalAa, lnSeqNum, m_nThreadNum);
 
-	pool tp(m_nThreadNum);
+        // BaCh 23.08.2016
+        // "boost::threadpool" is actually NOT part of BOOST, it's http://threadpool.sourceforge.net/
+        // it probably was intended to be included in BOOST, but apparently never made it
+        //using namespace boost::threadpool;
+	boost::threadpool::pool tp(m_nThreadNum);
+
 	// Ummm, no output please, that will interfere with streaming to STDOUT
 	// We *could* output to cerr though
 	// cout << "start " << m_nThreadNum << "  threads" << endl;
