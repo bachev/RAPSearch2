@@ -235,7 +235,6 @@ int main(int argc, char** argv)
 
 void printUsage(const char *error)
 {
-    fprintf(stderr, "%s\n", error);
     fprintf(stderr,
             "%s v%s: Fast protein similarity search tool for proteins / short reads\n"
             "-------------------------------------------------------------------------------\n",
@@ -266,5 +265,10 @@ void printUsage(const char *error)
     fprintf(stderr,
             "example> %s -" OPTION_QUERY " query.fa -" OPTION_SUBJECT " nr -" OPTION_OUTPUT " output_file\n\n",
 	    Program);
+
+    if(error!=nullptr && strlen(error)){
+      fprintf(stderr, "Error message is:\n%s\n", error);
+    }
+
     exit(-1);
 }

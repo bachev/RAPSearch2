@@ -178,6 +178,20 @@ if test $bachCCOMPILER = gcc; then
   CXXFLAGS="${CXXFLAGS} -Werror=unused-value"
 fi
 
+# OK, we're using C++11/14, makes life a whole lot easier
+case "${bachCCOMPILER=unknown}" in
+*gcc*)
+  CXXFLAGS="${CXXFLAGS} -std=c++14"
+;;
+*clang*)
+  CXXFLAGS="${CXXFLAGS} -std=c++14 -stdlib=libc++"
+;;
+*)
+  echo "The compiler is not GCC nor clang and I need a flag to enable at least C++11 standard, please contact the authors!"
+  exit 100;
+;;
+esac
+
 
 AC_CONFIG_FILES([Makefile
                  Src/Makefile])
