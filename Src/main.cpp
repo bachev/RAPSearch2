@@ -1,6 +1,7 @@
-#include "HashSearch.h"
-#include <iostream>
+#include "HashSearch.hpp"
 #include "paras.h"
+
+#include <iostream>
 
 
 #define OPTION_QUERY "q"

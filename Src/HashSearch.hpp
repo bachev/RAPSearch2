@@ -9,11 +9,12 @@
 #include <bitset>
 #include <algorithm>
 #include <boost/thread/thread.hpp>
-#include "BlastStat.h"
+
+#include "BlastStat.hpp"
 #include "paras.h"
-#include "cindex.h"
-#include "hitUnit.h"
-#include "Seg.h"
+#include "cindex.hpp"
+#include "hitUnit.hpp"
+#include "Seg.hpp"
 
 
 typedef unsigned int uint;

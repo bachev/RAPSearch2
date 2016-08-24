@@ -1,4 +1,4 @@
-#include "Seg.h"
+#include "Seg.hpp"
 #include "lnfac.h"
 
 unsigned char   aaflag[128];

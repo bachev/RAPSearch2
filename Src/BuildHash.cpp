@@ -1,4 +1,4 @@
-#include "HashSearch.h"
+#include "HashSearch.hpp"
 
 #define OPTION_FULLID "f"
 

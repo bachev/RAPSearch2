@@ -1,4 +1,4 @@
-#include "BlastStat.h"
+#include "BlastStat.hpp"
 
 //---------------------------------------------------
 BlastStat::BlastStat(int ifgapped, long int dbseqres, int dbseqnum)

@@ -1,5 +1,11 @@
 
-#include "HashSearch.h"
+#include "HashSearch.hpp"
+#include "threadpool.hpp"
+#include "mergeUnit.hpp"
+#include "weight.h"
+#include "aa.h"
+#include "n2a.h"
+
 #include <cmath>
 #include <cstring>
 #include <cstdio>
@@ -18,11 +24,6 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread/mutex.hpp>
-#include "threadpool.hpp"
-#include "weight.h"
-#include "aa.h"
-#include "n2a.h"
-#include "mergeUnit.h"
 
 using std::cout;
 using std::cerr;
