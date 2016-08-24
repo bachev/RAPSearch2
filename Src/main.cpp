@@ -217,15 +217,17 @@ int main(int argc, char** argv)
 
     time_t jobstart = time(NULL);
 
-    printf("QueryFileName %s\n", szQrFile);
+    if(!nStdout) printf("QueryFileName %s\n", szQrFile);
 
-	CHashSearch hs(nThreadNum);
-	hs.Process(szDbHash, szQrFile, szOutFile, nStdout, bEvalue, bLogE, dThr, nMaxAlnPer, nMaxHitPer, nQueryType, bPrintEmpty, bGapExt, bAcc, bHssp, nMinLen, bXml);
+    CHashSearch hs(nThreadNum);
+    hs.Process(szDbHash, szQrFile, szOutFile, nStdout, bEvalue, bLogE, dThr, nMaxAlnPer, nMaxHitPer, nQueryType, bPrintEmpty, bGapExt, bAcc, bHssp, nMinLen, bXml);
 
-    printf(">>>Main END\n");
-    time_t jobfinished = time(NULL);
-    double	timeused = difftime(jobfinished, jobstart);
-    printf("Time used: %d min (%.1f hours)\n", int(timeused / 60), timeused / 3600.0);
+    if(!nStdout) {
+      printf(">>>Main END\n");
+      time_t jobfinished = time(NULL);
+      double	timeused = difftime(jobfinished, jobstart);
+      printf("Time used: %d min (%.1f hours)\n", int(timeused / 60), timeused / 3600.0);
+    }
 
     return 0;
 }
