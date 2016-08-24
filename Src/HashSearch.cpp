@@ -2958,20 +2958,20 @@ void CHashSearch::PrintM8(vector<CHitUnit>& v, ostream& of)
 
 
 template<class T>
-void CHashSearch::PrintXmlLine(char* sTag, T s)
+void CHashSearch::PrintXmlLine(const char* sTag, T s)
 {
 	m_ofXml << string(m_unXmlSp, ' ') << "<" << sTag << ">" << s << "</" << sTag << ">" << "\n";
 }
 
 
-void CHashSearch::PrintXmlTag(char* sTag)
+void CHashSearch::PrintXmlTag(const char* sTag)
 {
 	m_ofXml << string(m_unXmlSp, ' ') << "<" << sTag << ">" << "\n";
 	m_unXmlSp += 2;
 }
 
 
-void CHashSearch::PrintXmlTagR(char* sTag)
+void CHashSearch::PrintXmlTagR(const char* sTag)
 {
 	m_unXmlSp -= 2;
 	m_ofXml << string(m_unXmlSp, ' ') << "</" << sTag << ">" << "\n";

@@ -24,7 +24,7 @@ using namespace std;
 #define	Program	"rapsearch"
 #define	Version "2.23"
 
-void printUsage(char *error);
+void printUsage(const char *error);
 
 int main(int argc, char** argv)
 {
@@ -231,7 +231,7 @@ int main(int argc, char** argv)
 }
 
 
-void printUsage(char *error)
+void printUsage(const char *error)
 {
     fprintf(stderr, "%s\n", error);
     fprintf(stderr,

@@ -199,9 +199,9 @@ private:
 	void PrintM8(vector<CHitUnit>& v, ostream& of);
 
 	template<class T>
-	void PrintXmlLine(char* sTag, T s);
-	void PrintXmlTag(char* sTag);
-	void PrintXmlTagR(char* sTag);
+	void PrintXmlLine(const char* sTag, T s);
+	void PrintXmlTag(const char* sTag);
+	void PrintXmlTagR(const char* sTag);
 	void PrintXmlBegin(string& sDb);
 	void PrintXml(vector<CHitUnit>& v, int nIdx);
 	void PrintXmlEnd();

@@ -50,11 +50,12 @@ Seg::~Seg(void)
     free(entray);
 }
 
+
 void Seg::getwin_init(void)
 {
-    char    *cp, *cp0;
-    int             i;
-    char    c;
+    const char *cp, *cp0;
+    int        i;
+    char       c;
 
     for (i = 0; i < sizeof(aaindex)/sizeof(aaindex[0]); ++i)
     {
@@ -62,6 +63,7 @@ void Seg::getwin_init(void)
         aaflag[i] = TRUE;
     }
 
+    // BaCh 24.8.2016: Uhhh ... I hate that line below
     for (cp = cp0 = "ACDEFGHIKLMNPQRSTVWY"; (c = *cp) != '\0'; ++cp)
     {
         i = cp - cp0;
@@ -73,6 +75,7 @@ void Seg::getwin_init(void)
     }
     return;
 }
+
 
 //---------------------------------
 char* Seg::maskseq(const char *fastaseq)

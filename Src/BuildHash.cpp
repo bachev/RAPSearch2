@@ -2,7 +2,7 @@
 
 #define OPTION_FULLID "f"
 
-void printUsage(char *error);
+void printUsage(const char *error);
 
 int main(int argc, char *argv[])
 {
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void printUsage(char *info)
+void printUsage(const char *info)
 {
 	printf("%s", info);
 	printf("Usage: prerapsearch -d database -n swift-file(base name only)\n");
