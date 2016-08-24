@@ -2208,13 +2208,18 @@ void CHashSearch::CalRes(int nQIdx, uchar* pQ, int nQOriLen, uint unQSeedBeg, in
 		}
 	}
 
+	// Criteria on when to take / not take a hit
+
+	// -l alignment length criterium
+	if(nTotAlnLen < m_nMinLen) return;
+
 	// evalue criteria
 	if (m_bHssp == false && !(stAlnmnt.nScore>SUMHSP_MINRAWSCORE || (m_bEvalue==true && dEValue<=m_dThr) || (m_bEvalue==false && dBits>=m_dThr)))
 	{
 		return;
 	}
 	// hssp criteria
-	else if (m_bHssp == true && (nTotAlnLen < m_nMinLen || stAlnmnt.nMatch < m_vCriteria[nTotAlnLen]))
+	else if (m_bHssp == true && stAlnmnt.nMatch < m_vCriteria[nTotAlnLen])
 	{
 		return;
 	}
