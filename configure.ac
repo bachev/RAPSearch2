@@ -155,6 +155,17 @@ if test "${enable_static}" = "yes" ; then
 fi
 
 
+if test $bachCCOMPILER = gcc; then
+  CXXFLAGS="${CXXFLAGS} -Werror=uninitialized -Werror=return-type -Werror=parentheses"
+  CFLAGS="${CFLAGS} -Werror=uninitialized -Werror=return-type "
+fi
+
+# unused values may be a problem (e.g. using == in an assignment)
+if test $bachCCOMPILER = gcc; then
+  CXXFLAGS="${CXXFLAGS} -Werror=unused-value"
+fi
+
+
 AC_CONFIG_FILES([Makefile
                  Src/Makefile])
 AC_OUTPUT

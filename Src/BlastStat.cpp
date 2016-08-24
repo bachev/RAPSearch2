@@ -174,12 +174,14 @@ double BlastStat::fac(int r)
 }
 
 //ref: old way for calculating adjustment length
+/*
 int BlastStat::blastComputeLengthAdjustmentSimple(int query_length, int db_length, int db_num_seqs)
 {
     double	len = log(K * query_length * db_length) / H;
     //printf("expected HSP length (simple) = %.3f\n", len);
     //getchar();
 }
+*/
 
 //from blast_stat.c
 
