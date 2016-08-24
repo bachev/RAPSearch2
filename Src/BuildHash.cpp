@@ -63,7 +63,7 @@ void printUsage(const char *info)
 	printf("Usage: prerapsearch -d database -n swift-file(base name only)\n");
 	printf("       optional parameter:\n");
 	printf("          -s splits-num (splits the database into specified number of files)\n"); 
-	printf("          -f T/t (output the full fasta headers of subjects to faicilitate anonotation)\n"); 
+	printf("          -f t/F (output the full fasta headers of subjects to facilitate annotation)\n"); 
 	printf("Example: prerapsearch -d nr -n nr\n");
 	exit(0);
 }

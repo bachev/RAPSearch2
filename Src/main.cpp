@@ -237,30 +237,34 @@ void printUsage(const char *error)
 {
     fprintf(stderr, "%s\n", error);
     fprintf(stderr,
-            "%s v%s: Fast protein similarity search tool for short reads\n"
-            "-------------------------------------------------------------------------\n"
+            "%s v%s: Fast protein similarity search tool for proteins / short reads\n"
+            "-------------------------------------------------------------------------------\n",
+	    Program, Version);
+    fprintf(stderr,
             " Options: \n"
             "\t-" OPTION_QUERY        " string : query file or stdin (FASTA or FASTQ format)\n"
             "\t-" OPTION_SUBJECT      " string : database file (**base name only**, with full path)\n"
             "\t-" OPTION_OUTPUT       " string : output file name\n"
-            "\t-" OPTION_STDOUT       " int : stream one result through stdout [1: m8 result, 2: aln result, default: don't stream any result through stdout]\n"
-            "\t-" OPTION_THREADNUM         " int  : number of threads [default: %d]\n"
-            "\t-" OPTION_EVAL         " double  : threshold of log10(E-value)/E-value [default: %.1f/10.0]. It is the default threshold.\n"
-			"\t-" OPTION_LOGE       " char    : use log10(E-value)/Evalue as threshold [t/T: print hits using log10(E-value), f/F: print hits using E-value, default: t]\n"
-            "\t-" OPTION_BITS         " double  : threshold of bit score [default: %.1f]. It is the alternative option to report hits, instead of log-evalue.\n"
-            "\t-" OPTION_MINLEN         " int  : threshold of minimal alignment length [default: %d]\n"
-			"\t-" OPTION_MAXHIT       " int    : number of database sequences to show one-line descriptions [default: %d]. If it's -1, all results will be shown.\n"
-			"\t-" OPTION_MAXALN       " int    : number of database sequence to show alignments [default: %d]. If it's -1, all results will be shown.\n"
-			"\t-" OPTION_QUERYTYPE       " char    : type of query sequences [u/U:unknown, n/N:nucleotide, a/A:amino acid, q/Q:fastq, default: %s]\n"
-			"\t-" OPTION_PRINTEMPTY       " char    : output ALL/MATCHED query reads into the alignment file [t/T: output all query reads, f/F: output matched reads, default: %s]\n"
-			"\t-" OPTION_GAPEXT       " char    : perform gap extension to speed up [t/T: perform gap extension, f/F: do not perform gap extension, default: %s]\n"
-			"\t-" OPTION_ACCELERATE       " char    : fast mode (10~30 fold) [t/T: perform fast search, f/F: perform normal search, default: %s]\n"
-			"\t-" OPTION_HSSP       " char    : perform HSSP criteria instead of evalue criteria [t/T: perform HSSP criteria, f/F: perform evalue criteria, default: %s]\n"
-			"\t-" OPTION_XML       " char    : print hits in xml format [t/T: print hits in xml format, f/F: not print hits in xml format, default: %s]\n"
-            "-------------------------------------------------------------------------\n"
-            "example> %s -" OPTION_QUERY " query.fa -" OPTION_SUBJECT " nr -" OPTION_OUTPUT " output_file\n\n"
+            "\t-" OPTION_STDOUT       " int    : stream one result through stdout [1: m8 result, 2: aln result, default: don't stream any result through stdout]\n"
+            "\t-" OPTION_THREADNUM    " int    : number of threads [default: %d]\n"
+            "\t-" OPTION_EVAL         " double : threshold of log10(E-value)/E-value [default: %.1f/10.0]. It is the default threshold.\n"
+	    "\t-" OPTION_LOGE         " char   : use log10(E-value)/Evalue as threshold [t/T: print hits using log10(E-value), f/F: print hits using E-value, default: t]\n"
+            "\t-" OPTION_BITS         " double : threshold of bit score [default: %.1f]. It is the alternative option to report hits, instead of log-evalue.\n"
+            "\t-" OPTION_MINLEN       " int    : threshold of minimal alignment length [default: %d]\n"
+	    "\t-" OPTION_MAXHIT       " int    : number of database sequences to show one-line descriptions [default: %d]. If it's -1, all results will be shown.\n"
+	    "\t-" OPTION_MAXALN       " int    : number of database sequence to show alignments [default: %d]. If it's -1, all results will be shown.\n"
+	    "\t-" OPTION_QUERYTYPE    " char   : type of query sequences [u/U:unknown, n/N:nucleotide, a/A:amino acid, q/Q:fastq, default: %s]\n"
+	    "\t-" OPTION_PRINTEMPTY   " char   : output ALL/MATCHED query reads into the alignment file [t/T: output all query reads, f/F: output matched reads, default: %s]\n"
+	    "\t-" OPTION_GAPEXT       " char   : perform gap extension to speed up [t/T: perform gap extension, f/F: do not perform gap extension, default: %s]\n"
+	    "\t-" OPTION_ACCELERATE   " char   : fast mode (10~30 fold) [t/T: perform fast search, f/F: perform normal search, default: %s]\n"
+	    "\t-" OPTION_HSSP         " char   : perform HSSP criteria instead of evalue criteria [t/T: perform HSSP criteria, f/F: perform evalue criteria, default: %s]\n"
+	    "\t-" OPTION_XML          " char   : print hits in xml format [t/T: print hits in xml format, f/F: not print hits in xml format, default: %s]\n"
+            "-------------------------------------------------------------------------------\n"
             ,
-            Program, Version, 1, 1.0, 0.0, 0, 500, 100, "u", "f", "t", "f", "f", "f", Program
+            1, 1.0, 0.0, 0, 500, 100, "u", "f", "t", "f", "f", "f"
            );
+    fprintf(stderr,
+            "example> %s -" OPTION_QUERY " query.fa -" OPTION_SUBJECT " nr -" OPTION_OUTPUT " output_file\n\n",
+	    Program);
     exit(-1);
 }
