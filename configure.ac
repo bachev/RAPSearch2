@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.63])
 AC_INIT([RAPSearch2], [2.23])
-AC_CONFIG_SRCDIR([Src/main.cpp])
+AC_CONFIG_SRCDIR([Src/rapsearch.cpp])
 AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([-Wall foreign])

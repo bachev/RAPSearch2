@@ -59,11 +59,15 @@ int main(int argc, char *argv[])
 
 void printUsage(const char *info)
 {
-	printf("%s", info);
 	printf("Usage: prerapsearch -d database -n swift-file(base name only)\n");
 	printf("       optional parameter:\n");
 	printf("          -s splits-num (splits the database into specified number of files)\n"); 
 	printf("          -f t/F (output the full fasta headers of subjects to facilitate annotation)\n"); 
 	printf("Example: prerapsearch -d nr -n nr\n");
+
+	if(info != nullptr && strlen(info)){
+	  printf("%s", info);
+	}
+
 	exit(0);
 }
